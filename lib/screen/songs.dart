@@ -142,8 +142,13 @@ class _SongsState extends State<Songs> with SingleTickerProviderStateMixin {
                           type: ArtworkType.AUDIO,
                         ),
                         onTap: () {
-                          controller
-                              .audioPlayPause(item.data![index].uri.toString());
+                          controller.audioPlayPause(
+                            item.data![index].uri.toString(),
+                            item.data![index].id,
+                            item.data![index].album,
+                            item.data![index].title,
+                            item.data![index].data
+                          );
                           controller.playing.value = true;
 
                           controller.artist.value =

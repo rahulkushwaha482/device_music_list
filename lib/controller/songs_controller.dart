@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:just_audio_background/just_audio_background.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -48,9 +49,20 @@ class SongController extends GetxController {
         });
   }
 
-  void setAudioSource(String uri) {
+  void setAudioSource(
+      String uri, int id, String? album, String title, String data) {
     try {
-      player.value.setAudioSource(AudioSource.uri(Uri.parse(uri)));
+      player.value.setAudioSource(AudioSource.uri(
+        Uri.parse(uri),
+        tag: MediaItem(
+          // Specify a unique ID for each media item:
+          id: id.toString(),
+          // Metadata to display in the notification:
+          album: album.toString(),
+          title: title.toString(),
+          artUri: Uri.parse('assets/music.png'),
+        ),
+      ));
       isPlaying.value = true;
     } catch (e) {
       if (kDebugMode) {
@@ -59,11 +71,13 @@ class SongController extends GetxController {
     }
   }
 
-  void audioPlayPause(String uri) async {
-    setAudioSource(uri);
+  void audioPlayPause(
+      String uri, int id, String? album, String title, String data) async {
+    setAudioSource(uri, id, album, title, data);
+    print('notification uri');
+    print(uri);
     playing.value = true;
     await player.value.play();
-
   }
 
   void playAudio() async {
