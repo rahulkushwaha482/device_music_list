@@ -1,3 +1,4 @@
+import 'package:audio_service/audio_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:just_audio/just_audio.dart';
@@ -5,10 +6,11 @@ import 'package:just_audio_background/just_audio_background.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 import 'package:permission_handler/permission_handler.dart';
 
-class SongController extends GetxController {
+class SongController extends GetxController{
   var isPlaying = false.obs;
   var player = AudioPlayer().obs;
   var audioQuery = OnAudioQuery().obs;
+  var audioHandler  = AudioHandler;
   var id = 0.obs;
   var artist = ''.obs;
   var title = ''.obs;
@@ -47,6 +49,8 @@ class SongController extends GetxController {
         onError: (Object e, StackTrace stackTrace) {
           //print('A stream error occurred: $e');
         });
+
+    playing.value = player.value.playing;
   }
 
   void setAudioSource(
@@ -60,7 +64,7 @@ class SongController extends GetxController {
           // Metadata to display in the notification:
           album: album.toString(),
           title: title.toString(),
-          artUri: Uri.parse('assets/music.png'),
+          artUri: Uri.parse("https://media.wnyc.org/i/1400/1400/l/80/1/ScienceFriday_WNYCStudios_1400.jpg"),
         ),
       ));
       isPlaying.value = true;

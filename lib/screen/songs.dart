@@ -143,12 +143,11 @@ class _SongsState extends State<Songs> with SingleTickerProviderStateMixin {
                         ),
                         onTap: () {
                           controller.audioPlayPause(
-                            item.data![index].uri.toString(),
-                            item.data![index].id,
-                            item.data![index].album,
-                            item.data![index].title,
-                            item.data![index].data
-                          );
+                              item.data![index].uri.toString(),
+                              item.data![index].id,
+                              item.data![index].album,
+                              item.data![index].title,
+                              item.data![index].data);
                           controller.playing.value = true;
 
                           controller.artist.value =
