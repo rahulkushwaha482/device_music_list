@@ -47,6 +47,8 @@ dependencies:
   rxdart: ^0.27.7
   get: ^4.6.5
   audio_service: ^0.18.9
+  marquee: ^2.2.3
+
 
 dev_dependencies:
   flutter_test:
