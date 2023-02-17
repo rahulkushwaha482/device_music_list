@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:developer';
-import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:just_audio_background/just_audio_background.dart';
@@ -12,10 +11,6 @@ Future<void> main() async {
     androidNotificationChannelName: 'Audio playback',
     androidNotificationOngoing: true,
   );
-
-  AssetsAudioPlayer.setupNotificationsOpenAction((notification) {
-    return true;
-  });
 
   WidgetsFlutterBinding.ensureInitialized();
   runZonedGuarded<Future<void>>(

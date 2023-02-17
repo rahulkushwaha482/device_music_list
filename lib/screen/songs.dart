@@ -1,12 +1,8 @@
 import 'package:display_misic_list/controller/songs_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:just_audio/just_audio.dart';
 import 'package:marquee/marquee.dart';
 import 'package:on_audio_query/on_audio_query.dart';
-import 'package:rxdart/rxdart.dart' as rx;
-import 'dart:math' as math;
-import '../utils/common.dart';
 
 class Songs extends StatefulWidget {
   const Songs({Key? key}) : super(key: key);
@@ -82,7 +78,7 @@ class _SongsState extends State<Songs> with SingleTickerProviderStateMixin {
                             height: 20,
                             child: Marquee(
                               text: controller.title.toString() ?? '',
-                              style: TextStyle(
+                              style: const TextStyle(
                                   fontWeight: FontWeight.bold, fontSize: 14),
                               scrollAxis: Axis.horizontal,
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -111,20 +107,6 @@ class _SongsState extends State<Songs> with SingleTickerProviderStateMixin {
                             onPressed: () {
                               controller.previousSong();
                             }),
-                        // (controller.player.value.playing)
-                        //     ? IconButton(
-                        //         icon: const Icon(Icons.pause),
-                        //         iconSize: 30.0,
-                        //         onPressed: () {
-                        //           controller.pauseAudio();
-                        //         })
-                        //     : IconButton(
-                        //         icon: const Icon(Icons.play_arrow),
-                        //         iconSize: 30.0,
-                        //         onPressed: () {
-                        //           controller.playAudio();
-                        //         }),
-
                         StreamBuilder<bool>(
                           stream: controller.player.value.playingStream,
                           builder: (context, snapshot) {
@@ -145,7 +127,6 @@ class _SongsState extends State<Songs> with SingleTickerProviderStateMixin {
                                 });
                           },
                         ),
-
                         IconButton(
                             icon: const Icon(
                               Icons.skip_next,
@@ -238,12 +219,6 @@ class _SongsState extends State<Songs> with SingleTickerProviderStateMixin {
                           controller.audioPlayPause(
                               item.data![index].data, item.data, index);
                           controller.playing.value = true;
-                          //
-                          // controller.artist.value =
-                          //     item.data![index].artist.toString();
-                          // controller.title.value =
-                          //     item.data![index].title.toString();
-                          // controller.id.value = item.data![index].id;
                         },
                       );
                     },

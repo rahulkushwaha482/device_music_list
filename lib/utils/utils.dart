@@ -1,12 +1,9 @@
-import 'package:assets_audio_player/assets_audio_player.dart';
-import 'package:flutter/material.dart';
-import 'package:palette_generator/palette_generator.dart';
-
-Future<PaletteGenerator> getImageColors(AssetsAudioPlayer player) async {
-  var paletteGenerator = await PaletteGenerator.fromImageProvider(
-    AssetImage(player.getCurrentAudioImage?.path ?? ''),
-  );
-  return paletteGenerator;
+bool validUrl(String path) {
+  try {
+    return (Uri.parse(path)).isAbsolute;
+  } catch (e) {
+    return false;
+  }
 }
 
 String durationFormat(Duration duration) {
