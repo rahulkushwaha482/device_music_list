@@ -28,7 +28,7 @@ class _SongsState extends State<Songs> with SingleTickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    controller.onInit();
+
     return Scaffold(
       appBar: AppBar(
         title: const Text("My Music Gallery"),
@@ -36,153 +36,163 @@ class _SongsState extends State<Songs> with SingleTickerProviderStateMixin {
       ),
       bottomNavigationBar: Obx(
         () => (controller.isPlaying.value || controller.playing.value)
-            ? Container(
-                margin: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
-                height: 60,
-                width: MediaQuery.of(context).size.width,
-                decoration: BoxDecoration(
-                    gradient: const LinearGradient(
-                        begin: Alignment.topLeft,
-                        end: Alignment(0, 5),
-                        colors: [
-                          Colors.grey,
-                          Colors.grey,
-                        ]),
-                    borderRadius: BorderRadius.circular(30)),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(left: 8.0, right: 10.0),
-                      child: StreamBuilder<bool>(
-                        stream: controller.player.value.playingStream,
-                        builder: (context, snapshot) {
-                          bool? playingState = snapshot.data;
+            ? InkWell(
+                onTap: () {
+                  controller.openPlayer(controller.id);
+                },
+                child: Hero(
+                  tag: 'music',
+                  child: Container(
+                    margin:
+                        const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
+                    height: 60,
+                    width: MediaQuery.of(context).size.width,
+                    decoration: BoxDecoration(
+                        gradient: const LinearGradient(
+                            begin: Alignment.topLeft,
+                            end: Alignment(0, 5),
+                            colors: [
+                              Colors.grey,
+                              Colors.grey,
+                            ]),
+                        borderRadius: BorderRadius.circular(30)),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(left: 8.0, right: 10.0),
+                          child: StreamBuilder<bool>(
+                            stream: controller.player.value.playingStream,
+                            builder: (context, snapshot) {
+                              bool? playingState = snapshot.data;
 
-                          return AnimatedBuilder(
-                            animation: _animationController,
-                            builder: (_, child) {
-                              if (playingState != null && playingState) {
-                                _animationController.forward();
-                                _animationController.repeat();
-                              } else {
-                                _animationController.stop();
-                              }
-                              return Transform.rotate(
-                                  angle:
-                                      _animationController.value * 2 * math.pi,
-                                  child: child);
+                              return AnimatedBuilder(
+                                animation: _animationController,
+                                builder: (_, child) {
+                                  if (playingState != null && playingState) {
+                                    _animationController.forward();
+                                    _animationController.repeat();
+                                  } else {
+                                    _animationController.stop();
+                                  }
+                                  return Transform.rotate(
+                                      angle: _animationController.value *
+                                          2 *
+                                          math.pi,
+                                      child: child);
+                                },
+                                child: QueryArtworkWidget(
+                                  artworkHeight: 45,
+                                  artworkWidth: 45,
+                                  id: controller.id.toInt(),
+                                  type: ArtworkType.AUDIO,
+                                  nullArtworkWidget: const CircleAvatar(
+                                    radius: 20,
+                                    backgroundColor: Colors.deepOrange,
+                                    child: Icon(
+                                      Icons.music_note,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ),
+                              );
                             },
-                            child: QueryArtworkWidget(
-                              artworkHeight: 45,
-                              artworkWidth: 45,
-                              id: controller.id.toInt(),
-                              type: ArtworkType.AUDIO,
-                              nullArtworkWidget: const CircleAvatar(
-                                radius: 20,
-                                backgroundColor: Colors.deepOrange,
-                                child: Icon(
-                                  Icons.music_note,
-                                  color: Colors.white,
+                          ),
+                        ),
+                        SizedBox(
+                          width: 160,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              SizedBox(
+                                height: 20,
+                                child: Marquee(
+                                  text: controller.title.toString() ?? '',
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.bold, fontSize: 14),
+                                  scrollAxis: Axis.horizontal,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  velocity: 50,
+                                  textDirection: TextDirection.ltr,
                                 ),
                               ),
-                            ),
-                          );
-                        },
-                      ),
-                    ),
-                    SizedBox(
-                      width: 160,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          SizedBox(
-                            height: 20,
-                            child: Marquee(
-                              text: controller.title.toString() ?? '',
-                              style: const TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 14),
-                              scrollAxis: Axis.horizontal,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              velocity: 50,
-                              textDirection: TextDirection.ltr,
-                            ),
+                              Text(
+                                controller.artist.toString(),
+                                maxLines: 1,
+                                style: const TextStyle(
+                                  fontSize: 10,
+                                  overflow: TextOverflow.clip,
+                                ),
+                              ),
+                            ],
                           ),
-                          Text(
-                            controller.artist.toString(),
-                            maxLines: 1,
-                            style: const TextStyle(
-                              fontSize: 10,
-                              overflow: TextOverflow.clip,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Row(
-                      children: [
-                        IconButton(
-                            icon: const Icon(
-                              Icons.skip_previous,
-                            ),
-                            iconSize: 30.0,
-                            onPressed: () {
-                              controller.previousSong();
-                            }),
-                        StreamBuilder<bool>(
-                          stream: controller.player.value.playingStream,
-                          builder: (context, snapshot) {
-                            bool? playingState = snapshot.data;
-                            if (playingState != null && playingState) {
-                              return IconButton(
-                                  icon: const Icon(Icons.pause),
-                                  iconSize: 30.0,
-                                  onPressed: () {
-                                    controller.pauseAudio();
-                                  });
-                            }
-                            return IconButton(
-                                icon: const Icon(Icons.play_arrow),
+                        ),
+                        Row(
+                          children: [
+                            IconButton(
+                                icon: const Icon(
+                                  Icons.skip_previous,
+                                ),
                                 iconSize: 30.0,
                                 onPressed: () {
-                                  controller.playAudio();
-                                });
-                          },
-                        ),
-                        IconButton(
-                            icon: const Icon(
-                              Icons.skip_next,
+                                  controller.previousSong();
+                                }),
+                            StreamBuilder<bool>(
+                              stream: controller.player.value.playingStream,
+                              builder: (context, snapshot) {
+                                bool? playingState = snapshot.data;
+                                if (playingState != null && playingState) {
+                                  return IconButton(
+                                      icon: const Icon(Icons.pause),
+                                      iconSize: 30.0,
+                                      onPressed: () {
+                                        controller.pauseAudio();
+                                      });
+                                }
+                                return IconButton(
+                                    icon: const Icon(Icons.play_arrow),
+                                    iconSize: 30.0,
+                                    onPressed: () {
+                                      controller.playAudio();
+                                    });
+                              },
                             ),
-                            iconSize: 30.0,
-                            onPressed: () {
-                              controller.nextSong();
-                            }),
+                            IconButton(
+                                icon: const Icon(
+                                  Icons.skip_next,
+                                ),
+                                iconSize: 30.0,
+                                onPressed: () {
+                                  controller.nextSong();
+                                }),
+                          ],
+                        ),
                       ],
-                    ),
-                  ],
 
-                  // subtitle: Container(
-                  //   height: 40,
-                  //   color: Colors.transparent,
-                  //   child: StreamBuilder<PositionData>(
-                  //     stream: _positionDataStream,
-                  //     builder: (context, snapshot) {
-                  //       final positionData = snapshot.data;
-                  //       return SeekBar(
-                  //         duration: positionData?.duration ?? Duration.zero,
-                  //         position:
-                  //             (controller.player.value.processingState ==
-                  //                     ProcessingState.completed)
-                  //                 ? Duration.zero
-                  //                 : positionData?.position ?? Duration.zero,
-                  //         bufferedPosition:
-                  //             positionData?.bufferedPosition ?? Duration.zero,
-                  //         onChangeEnd: controller.player.value.seek,
-                  //       );
-                  //     }, // Container
-                  //   ),
-                  // ),
+                      // subtitle: Container(
+                      //   height: 40,
+                      //   color: Colors.transparent,
+                      //   child: StreamBuilder<PositionData>(
+                      //     stream: _positionDataStream,
+                      //     builder: (context, snapshot) {
+                      //       final positionData = snapshot.data;
+                      //       return SeekBar(
+                      //         duration: positionData?.duration ?? Duration.zero,
+                      //         position:
+                      //             (controller.player.value.processingState ==
+                      //                     ProcessingState.completed)
+                      //                 ? Duration.zero
+                      //                 : positionData?.position ?? Duration.zero,
+                      //         bufferedPosition:
+                      //             positionData?.bufferedPosition ?? Duration.zero,
+                      //         onChangeEnd: controller.player.value.seek,
+                      //       );
+                      //     }, // Container
+                      //   ),
+                      // ),
+                    ),
+                  ),
                 ),
               )
             : SizedBox(

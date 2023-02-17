@@ -51,9 +51,9 @@ class SeekBarState extends State<SeekBar> {
               value: min(widget.bufferedPosition.inMilliseconds.toDouble(),
                   widget.duration.inMilliseconds.toDouble()),
               onChanged: (value) {
-                setState(() {
+                //setState(() {
                   _dragValue = value;
-                });
+                //});
                 if (widget.onChanged != null) {
                   widget.onChanged!(Duration(milliseconds: value.round()));
                 }
@@ -77,9 +77,9 @@ class SeekBarState extends State<SeekBar> {
             value: min(_dragValue ?? widget.position.inMilliseconds.toDouble(),
                 widget.duration.inMilliseconds.toDouble()),
             onChanged: (value) {
-              setState(() {
+            //  setState(() {
                 _dragValue = value;
-              });
+             // });
               if (widget.onChanged != null) {
                 widget.onChanged!(Duration(milliseconds: value.round()));
               }
@@ -137,3 +137,11 @@ class PositionData {
 
   PositionData(this.position, this.bufferedPosition, this.duration);
 }
+
+//duration class
+class DurationState {
+  DurationState({this.position = Duration.zero, this.total = Duration.zero});
+
+  Duration position, total;
+}
+

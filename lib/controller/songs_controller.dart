@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:audio_service/audio_service.dart';
+import 'package:display_misic_list/utils/common.dart';
 import 'package:display_misic_list/utils/utils.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
@@ -7,12 +8,13 @@ import 'package:just_audio/just_audio.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:rxdart/rxdart.dart' as rx;
 
 class SongController extends GetxController {
   var isPlaying = false.obs;
   var player = AudioPlayer().obs;
   var audioQuery = OnAudioQuery().obs;
-  var audioHandler = AudioHandler;
+
   var id = 0.obs;
   var artist = 'Artist'.obs;
   var title = 'Title'.obs;
@@ -139,4 +141,23 @@ class SongController extends GetxController {
   void previousSong() {
     player.value.seekToPrevious();
   }
+
+  void openPlayer(RxInt id) {
+    Get.toNamed(
+      '/player',
+    );
+  }
+
+  void goBack() {
+
+    Get.back();
+  }
+
+  //duration state stream
+  Stream<DurationState> get durationStateStream =>
+      rx.Rx.combineLatest2<Duration, Duration?, DurationState>(
+          player.value.positionStream,
+          player.value.durationStream,
+          (position, duration) => DurationState(
+              position: position, total: duration ?? Duration.zero));
 }
