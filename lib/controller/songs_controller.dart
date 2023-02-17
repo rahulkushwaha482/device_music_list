@@ -14,8 +14,8 @@ class SongController extends GetxController {
   var audioQuery = OnAudioQuery().obs;
   var audioHandler = AudioHandler;
   var id = 0.obs;
-  var artist = ''.obs;
-  var title = ''.obs;
+  var artist = 'Artist'.obs;
+  var title = 'Title'.obs;
   var playing = false.obs;
 
   List<SongModel> songs = [];

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:marquee/marquee.dart';
 import 'package:on_audio_query/on_audio_query.dart';
+import 'dart:math' as math;
 
 class Songs extends StatefulWidget {
   const Songs({Key? key}) : super(key: key);
@@ -53,19 +54,41 @@ class _SongsState extends State<Songs> with SingleTickerProviderStateMixin {
                   children: [
                     Padding(
                       padding: const EdgeInsets.only(left: 8.0, right: 10.0),
-                      child: QueryArtworkWidget(
-                        artworkHeight: 45,
-                        artworkWidth: 45,
-                        id: controller.id.toInt(),
-                        type: ArtworkType.AUDIO,
-                        nullArtworkWidget: const CircleAvatar(
-                          radius: 20,
-                          backgroundColor: Colors.deepOrange,
-                          child: Icon(
-                            Icons.music_note,
-                            color: Colors.white,
-                          ),
-                        ),
+                      child: StreamBuilder<bool>(
+                        stream: controller.player.value.playingStream,
+                        builder: (context, snapshot) {
+                          bool? playingState = snapshot.data;
+
+                          return AnimatedBuilder(
+                            animation: _animationController,
+                            builder: (_, child) {
+                              if (playingState != null && playingState) {
+                                _animationController.forward();
+                                _animationController.repeat();
+                              } else {
+                                _animationController.stop();
+                              }
+                              return Transform.rotate(
+                                  angle:
+                                      _animationController.value * 2 * math.pi,
+                                  child: child);
+                            },
+                            child: QueryArtworkWidget(
+                              artworkHeight: 45,
+                              artworkWidth: 45,
+                              id: controller.id.toInt(),
+                              type: ArtworkType.AUDIO,
+                              nullArtworkWidget: const CircleAvatar(
+                                radius: 20,
+                                backgroundColor: Colors.deepOrange,
+                                child: Icon(
+                                  Icons.music_note,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                          );
+                        },
                       ),
                     ),
                     SizedBox(
