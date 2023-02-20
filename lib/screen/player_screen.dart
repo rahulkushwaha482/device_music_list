@@ -10,6 +10,8 @@ import '../utils/utils.dart';
 class PlayerScreen extends StatelessWidget {
   final SongController controller = Get.put(SongController());
 
+  PlayerScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -19,7 +21,7 @@ class PlayerScreen extends StatelessWidget {
           width: double.infinity,
           height: MediaQuery.of(context).size.height,
           padding: const EdgeInsets.only(top: 56.0, right: 20.0, left: 20.0),
-          decoration: BoxDecoration(color: Colors.white24),
+          decoration: const BoxDecoration(color: Colors.white24),
           child: Column(
             children: <Widget>[
               //exit button and the song title
@@ -42,40 +44,44 @@ class PlayerScreen extends StatelessWidget {
                       ),
                     ),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     width: 10,
                   ),
-                  Flexible(
-                    child: Text(
-                      'currentSongTitle',
-                      style: const TextStyle(
-                        color: Colors.black87,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 14,
+                  Obx(
+                    () => Flexible(
+                      flex: 5,
+                      child: Text(
+                        controller.title.toString(),
+                        style: const TextStyle(
+                          color: Colors.black87,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14,
+                        ),
                       ),
                     ),
-                    flex: 5,
                   ),
                 ],
               ),
 
               //artwork container
-              Hero(
-                tag: 'music',
-                child: Container(
-                  width: 300,
-                  height: 300,
-                  margin: const EdgeInsets.only(top: 30, bottom: 30),
-                  child: QueryArtworkWidget(
-                    artworkBorder: BorderRadius.circular(200),
-                    id: controller.id.toInt(),
-                    type: ArtworkType.AUDIO,
-                    nullArtworkWidget: const CircleAvatar(
-                      radius: 20,
-                      backgroundColor: Colors.deepOrange,
-                      child: Icon(
-                        Icons.music_note,
-                        color: Colors.white,
+              Obx(
+                () => Hero(
+                  tag: 'music',
+                  child: Container(
+                    width: 300,
+                    height: 300,
+                    margin: const EdgeInsets.only(top: 30, bottom: 30),
+                    child: QueryArtworkWidget(
+                      artworkBorder: BorderRadius.circular(200),
+                      id: controller.id.toInt(),
+                      type: ArtworkType.AUDIO,
+                      nullArtworkWidget: const CircleAvatar(
+                        radius: 20,
+                        backgroundColor: Colors.deepOrange,
+                        child: Icon(
+                          Icons.music_note,
+                          color: Colors.white,
+                        ),
                       ),
                     ),
                   ),
@@ -86,32 +92,27 @@ class PlayerScreen extends StatelessWidget {
               Column(
                 children: [
                   //slider bar container
-                  Container(
-                    //slider bar duration state stream
-                    child: StreamBuilder<DurationState>(
-                      stream: controller.durationStateStream,
-                      builder: (context, snapshot) {
-                        final durationState = snapshot.data;
-                        final progress =
-                            durationState?.position ?? Duration.zero;
-                        final total = durationState?.total ?? Duration.zero;
+                  StreamBuilder<DurationState>(
+                    stream: controller.durationStateStream,
+                    builder: (context, snapshot) {
+                      final durationState = snapshot.data;
+                      final progress = durationState?.position ?? Duration.zero;
+                      final total = durationState?.total ?? Duration.zero;
 
-                        return ProgressBar(
-                          progress: progress,
-                          total: total,
-                          baseBarColor: Colors.grey,
-                          progressBarColor: Colors.blue,
-                          thumbColor: Colors.blue,
-                          timeLabelTextStyle: const TextStyle(
-                            fontSize: 0,
-                          ),
-                          onSeek: (duration) {
-                            controller.player.value.seek(duration);
-                          },
-                        );
-
-                      },
-                    ),
+                      return ProgressBar(
+                        progress: progress,
+                        total: total,
+                        baseBarColor: Colors.grey,
+                        progressBarColor: Colors.blue,
+                        thumbColor: Colors.blue,
+                        timeLabelTextStyle: const TextStyle(
+                          fontSize: 0,
+                        ),
+                        onSeek: (duration) {
+                          controller.player.value.seek(duration);
+                        },
+                      );
+                    },
                   ),
 
                   //position /progress and total text
@@ -151,7 +152,7 @@ class PlayerScreen extends StatelessWidget {
                 ],
               ),
 
-              SizedBox(
+              const SizedBox(
                 height: 20,
               ),
 
@@ -171,23 +172,21 @@ class PlayerScreen extends StatelessWidget {
                               : controller.player.value
                                   .setLoopMode(LoopMode.one);
                         },
-                        child: Container(
-                          child: StreamBuilder<LoopMode>(
-                            stream: controller.player.value.loopModeStream,
-                            builder: (context, snapshot) {
-                              final loopMode = snapshot.data;
-                              if (LoopMode.one == loopMode) {
-                                return const Icon(
-                                  Icons.repeat_one,
-                                  color: Colors.black87,
-                                );
-                              }
+                        child: StreamBuilder<LoopMode>(
+                          stream: controller.player.value.loopModeStream,
+                          builder: (context, snapshot) {
+                            final loopMode = snapshot.data;
+                            if (LoopMode.one == loopMode) {
                               return const Icon(
-                                Icons.repeat,
+                                Icons.repeat_one,
                                 color: Colors.black87,
                               );
-                            },
-                          ),
+                            }
+                            return const Icon(
+                              Icons.repeat,
+                              color: Colors.black87,
+                            );
+                          },
                         ),
                       ),
                     ),
@@ -200,11 +199,9 @@ class PlayerScreen extends StatelessWidget {
                             controller.player.value.seekToPrevious();
                           }
                         },
-                        child: Container(
-                          child: const Icon(
-                            Icons.skip_previous,
-                            color: Colors.black87,
-                          ),
+                        child: const Icon(
+                          Icons.skip_previous,
+                          color: Colors.black87,
                         ),
                       ),
                     ),
@@ -221,25 +218,23 @@ class PlayerScreen extends StatelessWidget {
                             }
                           }
                         },
-                        child: Container(
-                          child: StreamBuilder<bool>(
-                            stream: controller.player.value.playingStream,
-                            builder: (context, snapshot) {
-                              bool? playingState = snapshot.data;
-                              if (playingState != null && playingState) {
-                                return const Icon(
-                                  Icons.pause,
-                                  size: 30,
-                                  color: Colors.black87,
-                                );
-                              }
+                        child: StreamBuilder<bool>(
+                          stream: controller.player.value.playingStream,
+                          builder: (context, snapshot) {
+                            bool? playingState = snapshot.data;
+                            if (playingState != null && playingState) {
                               return const Icon(
-                                Icons.play_arrow,
+                                Icons.pause,
                                 size: 30,
                                 color: Colors.black87,
                               );
-                            },
-                          ),
+                            }
+                            return const Icon(
+                              Icons.play_arrow,
+                              size: 30,
+                              color: Colors.black87,
+                            );
+                          },
                         ),
                       ),
                     ),
@@ -252,11 +247,9 @@ class PlayerScreen extends StatelessWidget {
                             controller.player.value.seekToNext();
                           }
                         },
-                        child: Container(
-                          child: const Icon(
-                            Icons.skip_next,
-                            color: Colors.black87,
-                          ),
+                        child: const Icon(
+                          Icons.skip_next,
+                          color: Colors.black87,
                         ),
                       ),
                     ),
@@ -267,11 +260,9 @@ class PlayerScreen extends StatelessWidget {
                           controller.player.value.setShuffleModeEnabled(true);
                           toast(context, "Shuffling enabled");
                         },
-                        child: Container(
-                          child: const Icon(
-                            Icons.shuffle,
-                            color: Colors.black87,
-                          ),
+                        child: const Icon(
+                          Icons.shuffle,
+                          color: Colors.black87,
                         ),
                       ),
                     ),

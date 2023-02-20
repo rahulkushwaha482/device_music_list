@@ -23,12 +23,6 @@ class SongController extends GetxController {
   List<SongModel> songs = [];
   var currentIndex = 0.obs;
 
-  @override
-  void onClose() {
-    super.onClose();
-    player.value.dispose();
-  }
-
   void requestPermission() async {
     await Permission.storage.request();
     var status = await Permission.storage.status;
@@ -60,7 +54,7 @@ class SongController extends GetxController {
 
   void setAudioSource(int index) async {
     try {
-      var value = await getFilePath(songs[index]!.id).then((value) => value);
+      var value = await getFilePath(songs[index].id).then((value) => value);
       await player.value
           .setAudioSource(createPlaylist(songs, value), initialIndex: index);
       title.value = songs[index].title;
@@ -79,6 +73,7 @@ class SongController extends GetxController {
       List<SongModel> songs, String artWork) {
     List<AudioSource> sources = [];
     for (var song in songs) {
+      final assetFile = File('assets/music.png');
       sources.add(AudioSource.uri(Uri.parse(song.uri!),
           tag: MediaItem(
             // Specify a unique ID for each media item:
@@ -87,7 +82,7 @@ class SongController extends GetxController {
             album: song.album.toString(),
             title: song.title.toString(),
             artist: song.artist.toString(),
-            artUri: getUriFromString(artWork),
+            artUri:  getUriFromString(artWork),
           )));
     }
     return ConcatenatingAudioSource(children: sources);
@@ -117,8 +112,7 @@ class SongController extends GetxController {
   }
 
   void audioPlayPause(String data, List<SongModel>? itemData, int index) async {
-    var asdasd = await audioQuery.value
-        .queryArtwork(itemData![index].id, ArtworkType.AUDIO);
+    await audioQuery.value.queryArtwork(itemData![index].id, ArtworkType.AUDIO);
     setAudioSource(index);
     playing.value = true;
     await player.value.play();
@@ -149,7 +143,6 @@ class SongController extends GetxController {
   }
 
   void goBack() {
-
     Get.back();
   }
 

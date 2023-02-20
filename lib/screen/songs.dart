@@ -28,7 +28,6 @@ class _SongsState extends State<Songs> with SingleTickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       appBar: AppBar(
         title: const Text("My Music Gallery"),
@@ -41,7 +40,7 @@ class _SongsState extends State<Songs> with SingleTickerProviderStateMixin {
                   controller.openPlayer(controller.id);
                 },
                 child: Hero(
-                  tag: 'music',
+                  tag: 'musiccc',
                   child: Container(
                     margin:
                         const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
@@ -57,10 +56,10 @@ class _SongsState extends State<Songs> with SingleTickerProviderStateMixin {
                             ]),
                         borderRadius: BorderRadius.circular(30)),
                     child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
                         Padding(
-                          padding: const EdgeInsets.only(left: 8.0, right: 10.0),
+                          padding:
+                              const EdgeInsets.only(left: 8.0, right: 10.0),
                           child: StreamBuilder<bool>(
                             stream: controller.player.value.playingStream,
                             builder: (context, snapshot) {
@@ -110,21 +109,23 @@ class _SongsState extends State<Songs> with SingleTickerProviderStateMixin {
                                 child: Marquee(
                                   text: controller.title.toString() ?? '',
                                   style: const TextStyle(
-                                      fontWeight: FontWeight.bold, fontSize: 14),
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 14),
                                   scrollAxis: Axis.horizontal,
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   velocity: 50,
                                   textDirection: TextDirection.ltr,
                                 ),
                               ),
-                              Text(
-                                controller.artist.toString(),
-                                maxLines: 1,
-                                style: const TextStyle(
-                                  fontSize: 10,
-                                  overflow: TextOverflow.clip,
+                         Text(
+                                  controller.artist.toString(),
+                                  maxLines: 1,
+                                  style: const TextStyle(
+                                    fontSize: 10,
+                                    overflow: TextOverflow.clip,
+                                  ),
                                 ),
-                              ),
+
                             ],
                           ),
                         ),
