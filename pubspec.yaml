@@ -68,7 +68,7 @@ flutter:
 
 
   assets:
-     - assets/music.png
+     - assets/icon.png
      - assets/
 
   #   - images/a_dot_ham.jpeg

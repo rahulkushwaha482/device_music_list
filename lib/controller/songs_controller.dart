@@ -3,6 +3,7 @@ import 'package:audio_service/audio_service.dart';
 import 'package:display_misic_list/utils/common.dart';
 import 'package:display_misic_list/utils/utils.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:on_audio_query/on_audio_query.dart';
@@ -56,7 +57,7 @@ class SongController extends GetxController {
     try {
       var value = await getFilePath(songs[index].id).then((value) => value);
       await player.value
-          .setAudioSource(createPlaylist(songs, value), initialIndex: index);
+          .setAudioSource(await createPlaylist(songs, value), initialIndex: index);
       title.value = songs[index].title;
       artist.value = songs[index].artist!;
       id.value = songs[index].id;
@@ -69,11 +70,11 @@ class SongController extends GetxController {
     }
   }
 
-  ConcatenatingAudioSource createPlaylist(
-      List<SongModel> songs, String artWork) {
+  Future<ConcatenatingAudioSource> createPlaylist(
+      List<SongModel> songs, String artWork)  async{
     List<AudioSource> sources = [];
     for (var song in songs) {
-      final assetFile = File('assets/music.png');
+     // final assetFile = File('assets/music.png');
       sources.add(AudioSource.uri(Uri.parse(song.uri!),
           tag: MediaItem(
             // Specify a unique ID for each media item:
@@ -82,10 +83,22 @@ class SongController extends GetxController {
             album: song.album.toString(),
             title: song.title.toString(),
             artist: song.artist.toString(),
-            artUri:  getUriFromString(artWork),
+            artUri: await  getImageFileFromAssets() ,
           )));
     }
     return ConcatenatingAudioSource(children: sources);
+  }
+
+  Future<Uri> getImageFileFromAssets() async {
+    final byteData = await rootBundle.load('assets/icon.png');
+    final buffer = byteData.buffer;
+    Directory tempDir =  await getApplicationDocumentsDirectory();
+    String tempPath = tempDir.path;
+    var filePath =
+        tempPath + '/file_01.png'; // file_01.tmp is dump file, can be anything
+    return (await File(filePath).writeAsBytes(
+        buffer.asUint8List(byteData.offsetInBytes, byteData.lengthInBytes)))
+        .uri;
   }
 
   Uri getUriFromString(String string) {

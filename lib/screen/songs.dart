@@ -30,7 +30,7 @@ class _SongsState extends State<Songs> with SingleTickerProviderStateMixin {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("My Music Gallery"),
+        title: const Text("Device Music"),
         elevation: 2,
       ),
       bottomNavigationBar: Obx(
@@ -117,15 +117,14 @@ class _SongsState extends State<Songs> with SingleTickerProviderStateMixin {
                                   textDirection: TextDirection.ltr,
                                 ),
                               ),
-                         Text(
-                                  controller.artist.toString(),
-                                  maxLines: 1,
-                                  style: const TextStyle(
-                                    fontSize: 10,
-                                    overflow: TextOverflow.clip,
-                                  ),
+                              Text(
+                                controller.artist.toString(),
+                                maxLines: 1,
+                                style: const TextStyle(
+                                  fontSize: 10,
+                                  overflow: TextOverflow.clip,
                                 ),
-
+                              ),
                             ],
                           ),
                         ),
