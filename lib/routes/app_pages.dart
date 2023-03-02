@@ -4,7 +4,8 @@ import 'package:get/get.dart';
 
 class AppPages {
   static final pages = [
-    GetPage(name: '/', page: () => const Songs()),
+    GetPage(name: '/', page: () =>  Songs(),),
     GetPage(name: '/player', page: () =>  PlayerScreen()),
   ];
 }
+

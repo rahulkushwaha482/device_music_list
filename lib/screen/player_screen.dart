@@ -65,9 +65,7 @@ class PlayerScreen extends StatelessWidget {
 
               //artwork container
               Obx(
-                () => Hero(
-                  tag: 'music',
-                  child: Container(
+                () => Container(
                     width: 300,
                     height: 300,
                     margin: const EdgeInsets.only(top: 30, bottom: 30),
@@ -75,17 +73,14 @@ class PlayerScreen extends StatelessWidget {
                       artworkBorder: BorderRadius.circular(200),
                       id: controller.id.toInt(),
                       type: ArtworkType.AUDIO,
-                      nullArtworkWidget: const CircleAvatar(
-                        radius: 20,
-                        backgroundColor: Colors.deepOrange,
-                        child: Icon(
-                          Icons.music_note,
-                          color: Colors.white,
-                        ),
-                      ),
+                      nullArtworkWidget:  const CircleAvatar(
+                      radius: 20,
+                      backgroundImage:
+                      AssetImage('assets/icon.png'),
+                    )
                     ),
                   ),
-                ),
+
               ),
 
               //slider , position and duration widgets

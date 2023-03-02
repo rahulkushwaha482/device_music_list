@@ -15,7 +15,6 @@ String durationFormat(Duration duration) {
   return '$twoDigitMinutes:$twoDigitSeconds';
 }
 
-
 //define a toast method
 void toast(BuildContext context, String text) {
   ScaffoldMessenger.of(context).showSnackBar(SnackBar(

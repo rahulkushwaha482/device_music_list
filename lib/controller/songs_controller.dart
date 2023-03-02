@@ -1,11 +1,11 @@
 import 'dart:io';
-import 'package:audio_service/audio_service.dart';
 import 'package:display_misic_list/utils/common.dart';
 import 'package:display_misic_list/utils/utils.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:just_audio_background/just_audio_background.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -46,6 +46,12 @@ class SongController extends GetxController {
     });
   }
 
+  @override
+  void onClose() {
+    super.onClose();
+    player.close();
+  }
+
   void _updateCurrentPlayingSongDetails(int index) {
     if (songs.isNotEmpty) {
       currentIndex = index.obs;
@@ -56,8 +62,8 @@ class SongController extends GetxController {
   void setAudioSource(int index) async {
     try {
       var value = await getFilePath(songs[index].id).then((value) => value);
-      await player.value
-          .setAudioSource(await createPlaylist(songs, value), initialIndex: index);
+      await player.value.setAudioSource(await createPlaylist(songs, value),
+          initialIndex: index);
       title.value = songs[index].title;
       artist.value = songs[index].artist!;
       id.value = songs[index].id;
@@ -71,10 +77,9 @@ class SongController extends GetxController {
   }
 
   Future<ConcatenatingAudioSource> createPlaylist(
-      List<SongModel> songs, String artWork)  async{
+      List<SongModel> songs, String artWork) async {
     List<AudioSource> sources = [];
     for (var song in songs) {
-     // final assetFile = File('assets/music.png');
       sources.add(AudioSource.uri(Uri.parse(song.uri!),
           tag: MediaItem(
             // Specify a unique ID for each media item:
@@ -83,7 +88,9 @@ class SongController extends GetxController {
             album: song.album.toString(),
             title: song.title.toString(),
             artist: song.artist.toString(),
-            artUri: await  getImageFileFromAssets() ,
+            artUri: (artWork == 'null')
+                ? await getImageFileFromAssets()
+                : getUriFromString(artWork),
           )));
     }
     return ConcatenatingAudioSource(children: sources);
@@ -92,12 +99,12 @@ class SongController extends GetxController {
   Future<Uri> getImageFileFromAssets() async {
     final byteData = await rootBundle.load('assets/icon.png');
     final buffer = byteData.buffer;
-    Directory tempDir =  await getApplicationDocumentsDirectory();
+    Directory tempDir = await getApplicationDocumentsDirectory();
     String tempPath = tempDir.path;
     var filePath =
         tempPath + '/file_01.png'; // file_01.tmp is dump file, can be anything
     return (await File(filePath).writeAsBytes(
-        buffer.asUint8List(byteData.offsetInBytes, byteData.lengthInBytes)))
+            buffer.asUint8List(byteData.offsetInBytes, byteData.lengthInBytes)))
         .uri;
   }
 
