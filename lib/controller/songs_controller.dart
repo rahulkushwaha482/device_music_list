@@ -29,7 +29,10 @@ class SongController extends GetxController {
     var status = await Permission.storage.status;
     if (status.isDenied) {
       await Permission.storage.request();
+    }else{
+      audioQuery.value = OnAudioQuery();
     }
+   // audioQuery.value = OnAudioQuery();
   }
 
   @override
