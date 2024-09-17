@@ -7,6 +7,7 @@ import 'package:on_audio_query/on_audio_query.dart';
 import '../constant/app_string.dart';
 
 class Songs extends StatelessWidget {
+
   final SongController controller = Get.put(SongController());
 
   Songs({super.key});
@@ -143,20 +144,31 @@ class Songs extends StatelessWidget {
         children: [
           SafeArea(
             child: Obx(
-              () => FutureBuilder<List<SongModel>>(
+
+              () => controller.isPermissionGranted.value==true?
+              FutureBuilder<List<SongModel>>(
                 future: controller.audioQuery.value.querySongs(
                     sortType: null,
                     orderType: OrderType.ASC_OR_SMALLER,
                     uriType: UriType.EXTERNAL),
                 builder: (context, item) {
-                  if (item.data == null) {
-                    return const CircularProgressIndicator();
+
+                  // Show progress indicator while loading songs
+                  if (item.connectionState == ConnectionState.waiting ||
+                      item.data == null) {
+                    return const Center(child: CircularProgressIndicator());
+                  }else{
+                    // If no songs are found
+                    if (item.data!.isEmpty) {
+                      return const Center(child: Text('No songs found'));
+                    }
+                    // Populate songs list in the controller
+                    controller.songs.clear();
+                    controller.songs = item.data!;
                   }
-                  if (item.data!.isEmpty) {
-                    return const CircularProgressIndicator();
-                  }
-                  controller.songs.clear();
-                  controller.songs = item.data!;
+
+
+                  // Build list of songs
                   return ListView.builder(
                     physics: const BouncingScrollPhysics(),
                     itemCount: item.data!.length,
@@ -183,7 +195,7 @@ class Songs extends StatelessWidget {
                             backgroundImage:
                             AssetImage('assets/icon.png'),
                           )
-                          
+
                         ),
                         onTap: () {
                           controller.audioPlayPause(
@@ -194,7 +206,9 @@ class Songs extends StatelessWidget {
                     },
                   );
                 },
-              ),
+
+              ):
+              const Center(child: CircularProgressIndicator()),
             ),
           ),
         ],
@@ -202,3 +216,4 @@ class Songs extends StatelessWidget {
     );
   }
 }
+

@@ -21,6 +21,10 @@
   <key>CFBundleVersion</key>
   <string>1.0</string>
   <key>MinimumOSVersion</key>
+<<<<<<< HEAD
   <string>11.0</string>
+=======
+  <string>12.0</string>
+>>>>>>> bbe8558 (feat: Permission for Android,ioS added)
 </dict>
 </plist>

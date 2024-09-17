@@ -22,4 +22,5 @@ void toast(BuildContext context, String text) {
     behavior: SnackBarBehavior.floating,
     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50.0)),
   ));
+
 }

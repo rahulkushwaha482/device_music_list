@@ -1,4 +1,7 @@
 import 'dart:io';
+
+import 'package:device_info_plus/device_info_plus.dart';
+
 import 'package:display_misic_list/utils/common.dart';
 import 'package:display_misic_list/utils/utils.dart';
 import 'package:flutter/foundation.dart';
@@ -21,32 +24,89 @@ class SongController extends GetxController {
   var title = 'Title'.obs;
   var playing = false.obs;
 
+  var isPermissionGranted = false.obs;
+
+
   List<SongModel> songs = [];
   var currentIndex = 0.obs;
 
   void requestPermission() async {
-    await Permission.storage.request();
-    var status = await Permission.storage.status;
-    if (status.isDenied) {
-      await Permission.storage.request();
-    }else{
-      audioQuery.value = OnAudioQuery();
+
+    if(Platform.isAndroid){
+      var deviceData =  await DeviceInfoPlugin().androidInfo;
+      if(deviceData.version.sdkInt>=33){
+        var  status =  await Permission.audio.request();
+
+        if (status.isGranted ) {
+          isPermissionGranted.value = true;
+          audioQuery.value = OnAudioQuery();
+          player.value = AudioPlayer();
+          //update the current playing song index listener
+          player.value.currentIndexStream.listen((index) {
+            if (index != null) {
+              _updateCurrentPlayingSongDetails(index);
+            }
+          });
+
+        } else if(status.isDenied){
+          await Permission.audio.request();
+        }else if(status.isPermanentlyDenied){
+          openAppSettings();
+        }
+        else{
+          await Permission.audio.request();
+        }
+      }else{
+        var  status =  await Permission.storage.request();
+
+        if (status.isGranted ) {
+          isPermissionGranted.value = true;
+          audioQuery.value = OnAudioQuery();
+          player.value = AudioPlayer();
+          //update the current playing song index listener
+          player.value.currentIndexStream.listen((index) {
+            if (index != null) {
+              _updateCurrentPlayingSongDetails(index);
+            }
+          });
+
+        } else if(status.isDenied){
+          await Permission.storage.request();
+        }else if(status.isPermanentlyDenied){
+          openAppSettings();
+        }
+        else{
+          await Permission.storage.request();
+        }
+      }
     }
-   // audioQuery.value = OnAudioQuery();
+    if(Platform.isIOS){
+      var  status =  await Permission.mediaLibrary.request();
+
+      if (status.isGranted ) {
+        isPermissionGranted.value = true;
+        audioQuery.value = OnAudioQuery();
+        player.value = AudioPlayer();
+        //update the current playing song index listener
+        player.value.currentIndexStream.listen((index) {
+          if (index != null) {
+            _updateCurrentPlayingSongDetails(index);
+          }
+        });
+
+      } else if(status.isDenied){
+        await Permission.storage.request();
+      }else if(status.isPermanentlyDenied){
+        openAppSettings();
+      }
+    }
+
   }
 
   @override
   void onInit() {
     super.onInit();
     requestPermission();
-    audioQuery.value = OnAudioQuery();
-    player.value = AudioPlayer();
-    //update the current playing song index listener
-    player.value.currentIndexStream.listen((index) {
-      if (index != null) {
-        _updateCurrentPlayingSongDetails(index);
-      }
-    });
   }
 
   @override
@@ -104,8 +164,8 @@ class SongController extends GetxController {
     final buffer = byteData.buffer;
     Directory tempDir = await getApplicationDocumentsDirectory();
     String tempPath = tempDir.path;
-    var filePath =
-        tempPath + '/file_01.png'; // file_01.tmp is dump file, can be anything
+
+    var filePath = '$tempPath/file_01.png';
     return (await File(filePath).writeAsBytes(
             buffer.asUint8List(byteData.offsetInBytes, byteData.lengthInBytes)))
         .uri;
