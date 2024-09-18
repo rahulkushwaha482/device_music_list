@@ -18,7 +18,7 @@ class SongController extends GetxController {
   var isPlaying = false.obs;
   var player = AudioPlayer().obs;
   var audioQuery = OnAudioQuery().obs;
-
+  var currentSongId = 0.obs;
   var id = 0.obs;
   var artist = 'Artist'.obs;
   var title = 'Title'.obs;
@@ -130,7 +130,7 @@ class SongController extends GetxController {
       title.value = songs[index].title;
       artist.value = songs[index].artist!;
       id.value = songs[index].id;
-
+      currentSongId.value = songs[index].id;
       isPlaying.value = true;
     } catch (e) {
       if (kDebugMode) {
@@ -145,12 +145,12 @@ class SongController extends GetxController {
     for (var song in songs) {
       sources.add(AudioSource.uri(Uri.parse(song.uri!),
           tag: MediaItem(
-            // Specify a unique ID for each media item:
             id: song.id.toString(),
             // Metadata to display in the notification:
             album: song.album.toString(),
             title: song.title.toString(),
             artist: song.artist.toString(),
+            genre: song.genre.toString(),
             artUri: (artWork == 'null')
                 ? await getImageFileFromAssets()
                 : getUriFromString(artWork),
@@ -197,6 +197,7 @@ class SongController extends GetxController {
   void audioPlayPause(String data, List<SongModel>? itemData, int index) async {
     await audioQuery.value.queryArtwork(itemData![index].id, ArtworkType.AUDIO);
     setAudioSource(index);
+
     playing.value = true;
     await player.value.play();
   }

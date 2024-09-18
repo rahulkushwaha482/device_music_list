@@ -15,7 +15,6 @@ class PlayerScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
       body: SingleChildScrollView(
         child: Container(
           width: double.infinity,
@@ -72,6 +71,8 @@ class PlayerScreen extends StatelessWidget {
                     child: QueryArtworkWidget(
                       artworkBorder: BorderRadius.circular(200),
                       id: controller.id.toInt(),
+                      artworkRepeat: ImageRepeat.repeat,
+                        keepOldArtwork:true,
                       type: ArtworkType.AUDIO,
                       nullArtworkWidget:  const CircleAvatar(
                       radius: 20,

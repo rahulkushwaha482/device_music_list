@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:marquee/marquee.dart';
 import 'package:on_audio_query/on_audio_query.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 import '../constant/app_string.dart';
 
@@ -14,10 +15,11 @@ class Songs extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       appBar: AppBar(
         title: const Text(playerName),
-        elevation: 2,
+        elevation: 1,
       ),
       bottomNavigationBar: Obx(
         () => (controller.isPlaying.value || controller.playing.value)
@@ -75,7 +77,14 @@ class Songs extends StatelessWidget {
                                     fontWeight: FontWeight.bold, fontSize: 14),
                                 scrollAxis: Axis.horizontal,
                                 crossAxisAlignment: CrossAxisAlignment.start,
-                                velocity: 30,
+                                velocity: 10,
+                                blankSpace: 100.0,
+                                pauseAfterRound: Duration(milliseconds: 1),
+                                startPadding: 10.0,
+                                accelerationDuration: Duration(milliseconds: 1),
+                                accelerationCurve: Curves.linear,
+                                decelerationDuration: Duration(milliseconds: 500),
+                                decelerationCurve: Curves.easeOut,
                                 textDirection: TextDirection.ltr,
                               ),
                             ),
@@ -173,6 +182,7 @@ class Songs extends StatelessWidget {
                     physics: const BouncingScrollPhysics(),
                     itemCount: item.data!.length,
                     itemBuilder: (context, index) {
+
                       return ListTile(
                         title: Text(
                           item.data![index].title,
@@ -197,6 +207,18 @@ class Songs extends StatelessWidget {
                           )
 
                         ),
+                        trailing:
+                        Obx(() {
+                          return controller.currentSongId.value == item.data![index].id && controller.playing.value
+                              ? SizedBox(
+                            width: 20,
+                            child: LoadingAnimationWidget.staggeredDotsWave(
+                              color: Colors.green,
+                              size: 20,
+                            ),
+                          )
+                              : const SizedBox();
+                        }),
                         onTap: () {
                           controller.audioPlayPause(
                               item.data![index].data, item.data, index);
