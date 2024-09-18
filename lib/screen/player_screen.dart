@@ -15,58 +15,36 @@ class PlayerScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SingleChildScrollView(
-        child: Container(
-          width: double.infinity,
-          height: MediaQuery.of(context).size.height,
-          padding: const EdgeInsets.only(top: 56.0, right: 20.0, left: 20.0),
-          decoration: const BoxDecoration(color: Colors.white24),
+      backgroundColor: Colors.black,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        leading: Padding(
+          padding: const EdgeInsets.only(left: 10),
+          child: IconButton(
+              onPressed: () => controller.goBack(),
+              icon: const Icon(
+                Icons.keyboard_arrow_down,
+                size: 30,
+                color: Colors.white,
+              )),
+        ),
+      ),
+      extendBodyBehindAppBar: true,
+      body: Center(
+
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
               //exit button and the song title
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                mainAxisSize: MainAxisSize.max,
-                children: [
-                  Flexible(
-                    child: InkWell(
-                      onTap: () {
-                        controller.goBack();
-                      },
-                      //hides the player view
-                      child: Container(
-                        padding: const EdgeInsets.all(10.0),
-                        child: const Icon(
-                          Icons.keyboard_arrow_down,
-                          color: Colors.black87,
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(
-                    width: 10,
-                  ),
-                  Obx(
-                    () => Flexible(
-                      flex: 5,
-                      child: Text(
-                        controller.title.toString(),
-                        style: const TextStyle(
-                          color: Colors.black87,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 14,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+
+
 
               //artwork container
               Obx(
                 () => Container(
-                    width: 300,
-                    height: 300,
+                    width: 200,
+                    height: 200,
                     margin: const EdgeInsets.only(top: 30, bottom: 30),
                     child: Hero(
                       tag: controller.id,
@@ -88,67 +66,75 @@ class PlayerScreen extends StatelessWidget {
               ),
 
               //slider , position and duration widgets
-              Column(
-                children: [
-                  //slider bar container
-                  StreamBuilder<DurationState>(
-                    stream: controller.durationStateStream,
-                    builder: (context, snapshot) {
-                      final durationState = snapshot.data;
-                      final progress = durationState?.position ?? Duration.zero;
-                      final total = durationState?.total ?? Duration.zero;
+              Padding(
+                padding: const EdgeInsets.only(left: 30.0,right: 30.0),
 
-                      return ProgressBar(
-                        progress: progress,
-                        total: total,
-                        baseBarColor: Colors.grey,
-                        progressBarColor: Colors.blue,
-                        thumbColor: Colors.blue,
-                        timeLabelTextStyle: const TextStyle(
-                          fontSize: 0,
-                        ),
-                        onSeek: (duration) {
-                          controller.player.value.seek(duration);
-                        },
-                      );
-                    },
-                  ),
+                child: Column(
+                  children: [
 
-                  //position /progress and total text
-                  StreamBuilder<DurationState>(
-                    stream: controller.durationStateStream,
-                    builder: (context, snapshot) {
-                      final durationState = snapshot.data;
-                      final progress = durationState?.position ?? Duration.zero;
-                      final total = durationState?.total ?? Duration.zero;
+                    //slider bar container
+                    StreamBuilder<DurationState>(
+                      stream: controller.durationStateStream,
+                      builder: (context, snapshot) {
+                        final durationState = snapshot.data;
+                        final progress = durationState?.position ?? Duration.zero;
+                        final total = durationState?.total ?? Duration.zero;
+                        return ProgressBar(
+                          progress: progress,
+                          total: total,
+                          baseBarColor: Colors.white,
+                          progressBarColor: Colors.greenAccent,
+                          thumbColor: Colors.blue,
+                          timeLabelTextStyle: const TextStyle(
+                            fontSize: 10,
+                          ),
+                          onSeek: (duration) {
+                            controller.player.value.seek(duration);
+                          },
+                        );
 
-                      return Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        mainAxisSize: MainAxisSize.max,
-                        children: [
-                          Flexible(
-                            child: Text(
-                              progress.toString().split(".")[0],
-                              style: const TextStyle(
-                                color: Colors.black87,
-                                fontSize: 15,
+
+
+                      },
+                    ),
+
+
+                    //position /progress and total text
+                    StreamBuilder<DurationState>(
+                      stream: controller.durationStateStream,
+                      builder: (context, snapshot) {
+                        final durationState = snapshot.data;
+                        final progress = durationState?.position ?? Duration.zero;
+                        final total = durationState?.total ?? Duration.zero;
+
+                        return Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          mainAxisSize: MainAxisSize.max,
+                          children: [
+                            Flexible(
+                              child: Text(
+                                progress.toString().split(".")[0],
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 15,
+                                ),
                               ),
                             ),
-                          ),
-                          Flexible(
-                            child: Text(
-                              total.toString().split(".")[0],
-                              style: const TextStyle(
-                                color: Colors.black87,
-                                fontSize: 15,
+                            Flexible(
+                              child: Text(
+                                total.toString().split(".")[0],
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 15,
+                                ),
                               ),
                             ),
-                          ),
-                        ],
-                      );
-                    },
-                  ),
-                ],
+                          ],
+                        );
+                      },
+                    ),
+                  ],
+                ),
               ),
 
               const SizedBox(
@@ -156,122 +142,130 @@ class PlayerScreen extends StatelessWidget {
               ),
 
               //prev, play/pause & seek next control buttons
-              Container(
-                margin: const EdgeInsets.only(top: 20, bottom: 20),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  mainAxisSize: MainAxisSize.max,
-                  children: [
-                    Flexible(
-                      child: InkWell(
-                        onTap: () {
-                          controller.player.value.loopMode == LoopMode.one
-                              ? controller.player.value
-                                  .setLoopMode(LoopMode.all)
-                              : controller.player.value
-                                  .setLoopMode(LoopMode.one);
-                        },
-                        child: StreamBuilder<LoopMode>(
-                          stream: controller.player.value.loopModeStream,
-                          builder: (context, snapshot) {
-                            final loopMode = snapshot.data;
-                            if (LoopMode.one == loopMode) {
-                              return const Icon(
-                                Icons.repeat_one,
-                                color: Colors.black87,
-                              );
-                            }
-                            return const Icon(
-                              Icons.repeat,
-                              color: Colors.black87,
-                            );
+              Padding(
+                padding: const EdgeInsets.only(left: 30.0,right: 30.0),
+                child: Container(
+                  margin: const EdgeInsets.only(top: 20, bottom: 20),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    mainAxisSize: MainAxisSize.max,
+                    children: [
+                      Flexible(
+                        child: InkWell(
+                          onTap: () {
+                            controller.player.value.loopMode == LoopMode.one
+                                ? controller.player.value
+                                    .setLoopMode(LoopMode.all)
+                                : controller.player.value
+                                    .setLoopMode(LoopMode.one);
                           },
-                        ),
-                      ),
-                    ),
-
-                    //skip to previous
-                    Flexible(
-                      child: InkWell(
-                        onTap: () {
-                          if (controller.player.value.hasPrevious) {
-                            controller.player.value.seekToPrevious();
-                          }
-                        },
-                        child: const Icon(
-                          Icons.skip_previous,
-                          color: Colors.black87,
-                        ),
-                      ),
-                    ),
-
-                    //play pause
-                    Flexible(
-                      child: InkWell(
-                        onTap: () {
-                          if (controller.player.value.playing) {
-                            controller.player.value.pause();
-                          } else {
-                            if (controller.player.value.currentIndex != null) {
-                              controller.player.value.play();
-                            }
-                          }
-                        },
-                        child: StreamBuilder<bool>(
-                          stream: controller.player.value.playingStream,
-                          builder: (context, snapshot) {
-                            bool? playingState = snapshot.data;
-                            if (playingState != null && playingState) {
+                          child: StreamBuilder<LoopMode>(
+                            stream: controller.player.value.loopModeStream,
+                            builder: (context, snapshot) {
+                              final loopMode = snapshot.data;
+                              if (LoopMode.one == loopMode) {
+                                return const Icon(
+                                  Icons.repeat_one,
+                                  color: Colors.white,
+                                  size: 35,
+                                );
+                              }
                               return const Icon(
-                                Icons.pause,
-                                size: 30,
-                                color: Colors.black87,
+                                Icons.repeat,
+                                color: Colors.white,
+                                size: 35,
                               );
+                            },
+                          ),
+                        ),
+                      ),
+
+                      //skip to previous
+                      Flexible(
+                        child: InkWell(
+                          onTap: () {
+                            if (controller.player.value.hasPrevious) {
+                              controller.player.value.seekToPrevious();
                             }
-                            return const Icon(
-                              Icons.play_arrow,
-                              size: 30,
-                              color: Colors.black87,
-                            );
                           },
+                          child: const Icon(
+                            Icons.skip_previous,
+                            color: Colors.white,
+                            size: 35,
+                          ),
                         ),
                       ),
-                    ),
 
-                    //skip to next
-                    Flexible(
-                      child: InkWell(
-                        onTap: () {
-                          if (controller.player.value.hasNext) {
-                            controller.player.value.seekToNext();
-                          }
-                        },
-                        child: const Icon(
-                          Icons.skip_next,
-                          color: Colors.black87,
+                      //play pause
+                      Flexible(
+                        child: InkWell(
+                          onTap: () {
+                            if (controller.player.value.playing) {
+                              controller.player.value.pause();
+                            } else {
+                              if (controller.player.value.currentIndex != null) {
+                                controller.player.value.play();
+                              }
+                            }
+                          },
+                          child: StreamBuilder<bool>(
+                            stream: controller.player.value.playingStream,
+                            builder: (context, snapshot) {
+                              bool? playingState = snapshot.data;
+                              if (playingState != null && playingState) {
+                                return const Icon(
+                                  Icons.pause,
+                                  size: 35,
+                                  color: Colors.white,
+                                );
+                              }
+                              return const Icon(
+                                Icons.play_arrow,
+                                size: 35,
+                                color: Colors.white,
+                              );
+                            },
+                          ),
                         ),
                       ),
-                    ),
 
-                    Flexible(
-                      child: InkWell(
-                        onTap: () {
-                          controller.player.value.setShuffleModeEnabled(true);
-                          toast(context, "Shuffling enabled");
-                        },
-                        child: const Icon(
-                          Icons.shuffle,
-                          color: Colors.black87,
+                      //skip to next
+                      Flexible(
+                        child: InkWell(
+                          onTap: () {
+                            if (controller.player.value.hasNext) {
+                              controller.player.value.seekToNext();
+                            }
+                          },
+                          child: const Icon(
+                            Icons.skip_next,
+                            color: Colors.white,
+                            size: 35,
+                          ),
                         ),
                       ),
-                    ),
-                  ],
+
+                      Flexible(
+                        child: InkWell(
+                          onTap: () {
+                            controller.player.value.setShuffleModeEnabled(true);
+                            toast(context, "Shuffling enabled");
+                          },
+                          child: const Icon(
+                            Icons.shuffle,
+                            color: Colors.white,
+                            size: 35,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ],
           ),
         ),
-      ),
+
     );
   }
 }

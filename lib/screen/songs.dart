@@ -20,9 +20,12 @@ class Songs extends StatelessWidget {
 
 
     return Scaffold(
+      backgroundColor: Colors.grey.withOpacity(.2),
       appBar: AppBar(
-        title: const Text(playerName),
-        elevation: 1,
+        title: const Text(playerName,
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),),
+        centerTitle: false,
+        backgroundColor: Colors.transparent,
       ),
       bottomNavigationBar: Obx(
         () => (controller.isPlaying.value || controller.playing.value)
@@ -37,7 +40,7 @@ class Songs extends StatelessWidget {
                 child: Container(
                   margin:
                       const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
-                  height: 60,
+                  height: 70,
                   width: MediaQuery.of(context).size.width,
                   decoration: BoxDecoration(
                       gradient: const LinearGradient(
@@ -45,7 +48,7 @@ class Songs extends StatelessWidget {
                           end: Alignment(0, 5),
                           colors: [
                             Colors.grey,
-                            Colors.grey,
+                            Colors.greenAccent,
                           ]),
                       borderRadius: BorderRadius.circular(30)),
                   child: Row(
@@ -188,52 +191,66 @@ class Songs extends StatelessWidget {
 
 
                   // Build list of songs
-                  return ListView.builder(
+                  return ListView.separated(
+                    separatorBuilder: (context, index) {
+                      return const Divider(
+                        color: Colors.white30,
+                        height: 0,
+                        thickness: 1,
+                        indent: 85,
+                      );
+                    },
                     physics: const BouncingScrollPhysics(),
                     itemCount: item.data!.length,
                     itemBuilder: (context, index) {
 
-                      return ListTile(
-                        title: Text(
-                          item.data![index].title,
-                          style: const TextStyle(
-                              fontWeight: FontWeight.bold, color: Colors.black),
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        subtitle: Text(
-                          item.data![index].album.toString(),
-                          style: const TextStyle(
-                              color: Colors.black, fontSize: 13),
-                        ),
-                        leading: QueryArtworkWidget(
-                          artworkHeight: 40,
-                          artworkWidth: 40,
-                          id: item.data![index].id,
-                          type: ArtworkType.AUDIO,
-                          nullArtworkWidget: const CircleAvatar(
-                            radius: 20,
-                            backgroundImage:
-                            AssetImage('assets/icon.png'),
-                          )
-
-                        ),
-                        trailing:
-                        Obx(() {
-                          return controller.currentSongId.value == item.data![index].id && controller.playing.value
-                              ? SizedBox(
-                            width: 20,
-                            child: LoadingAnimationWidget.prograssiveDots(
-                              color: Colors.deepOrangeAccent,
-                              size: 20,
+                      return Padding(
+                        padding: const EdgeInsets.only(top: 10),
+                        child: ListTile(
+                          title: Text(
+                            item.data![index].title,
+                            style: const TextStyle(
+                                fontWeight: FontWeight.bold, color: Colors.white),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          subtitle: Text(
+                            item.data![index].album.toString(),
+                            style: const TextStyle(
+                                color: Colors.white, fontSize: 13),
+                          ),
+                          leading: ClipRRect(
+                            borderRadius: BorderRadius.circular(10),
+                            child: QueryArtworkWidget(
+                              artworkHeight: 40,
+                              artworkWidth: 40,
+                              id: item.data![index].id,
+                              type: ArtworkType.AUDIO,
+                              nullArtworkWidget: const CircleAvatar(
+                                radius: 20,
+                                backgroundImage:
+                                AssetImage('assets/icon.png'),
+                              )
+                            
                             ),
-                          )
-                              : const SizedBox();
-                        }),
-                        onTap: () {
-                          controller.audioPlayPause(
-                              item.data![index].data, item.data, index);
-                          controller.playing.value = true;
-                        },
+                          ),
+                          trailing:
+                          Obx(() {
+                            return controller.currentSongId.value == item.data![index].id && controller.playing.value
+                                ? SizedBox(
+                              width: 23,
+                              child: LoadingAnimationWidget.prograssiveDots(
+                                color: Colors.greenAccent,
+                                size: 23,
+                              ),
+                            )
+                                : const SizedBox();
+                          }),
+                          onTap: () {
+                            controller.audioPlayPause(
+                                item.data![index].data, item.data, index);
+                            controller.playing.value = true;
+                          },
+                        ),
                       );
                     },
                   );
