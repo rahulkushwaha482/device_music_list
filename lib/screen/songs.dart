@@ -57,7 +57,7 @@ class Songs extends StatelessWidget {
                           stream: controller.player.value.playingStream,
                           builder: (context, snapshot) {
                             return Hero(
-                              tag: 'controller.id',
+                              tag: controller.id,
                               child: QueryArtworkWidget(
                                 artworkHeight: 45,
                                 artworkWidth: 45,

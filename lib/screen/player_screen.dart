@@ -69,7 +69,7 @@ class PlayerScreen extends StatelessWidget {
                     height: 300,
                     margin: const EdgeInsets.only(top: 30, bottom: 30),
                     child: Hero(
-                      tag: 'controller.id',
+                      tag: controller.id,
                       child: QueryArtworkWidget(
                         artworkBorder: BorderRadius.circular(200),
                         id: controller.id.toInt(),
