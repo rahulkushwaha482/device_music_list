@@ -10,7 +10,7 @@ import '../utils/utils.dart';
 class PlayerScreen extends StatelessWidget {
   final SongController controller = Get.put(SongController());
 
-  PlayerScreen({super.key});
+  PlayerScreen( {super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -69,7 +69,7 @@ class PlayerScreen extends StatelessWidget {
                     height: 300,
                     margin: const EdgeInsets.only(top: 30, bottom: 30),
                     child: Hero(
-                      tag: controller.id,
+                      tag: 'controller.id',
                       child: QueryArtworkWidget(
                         artworkBorder: BorderRadius.circular(200),
                         id: controller.id.toInt(),

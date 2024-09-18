@@ -112,7 +112,7 @@ class SongController extends GetxController {
   @override
   void onClose() {
     super.onClose();
-    player.close();
+    //player.close();
   }
 
   void _updateCurrentPlayingSongDetails(int index) {

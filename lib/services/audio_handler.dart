@@ -1,15 +1,24 @@
 import 'package:audio_service/audio_service.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 
 Future<AudioHandler> initAudioService() async {
   return await AudioService.init(
     builder: () => MyAudioHandler(),
-    config: const AudioServiceConfig(
+    config:  AudioServiceConfig(
       androidNotificationChannelId: 'com.mycompany.myapp.audio',
       androidNotificationChannelName: 'Audio Service Demo',
       androidNotificationOngoing: true,
       androidStopForegroundOnPause: true,
+        androidNotificationIcon:'assets/icon.png',
+      preloadArtwork: true,
+        rewindInterval:Duration(seconds: 2),
+        artDownscaleWidth :70,
+        artDownscaleHeight:70,
+        notificationColor:Colors.green
+
+
     ),
   );
 }

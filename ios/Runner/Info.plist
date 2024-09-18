@@ -25,7 +25,17 @@
 
     <key>NSAppleMusicUsageDescription</key>
     <string>This music  requires access to media library</string>
-
+    <key>NSMicrophoneUsageDescription</key>
+    <string>This app will require this permission to listen music </string>
+    <key>NSAppTransportSecurity</key>
+    <dict>
+        <key>NSAllowsArbitraryLoads</key>
+        <true/>
+    </dict>
+    <key>UIBackgroundModes</key>
+      <array>
+        <string>audio</string>
+      </array>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>UILaunchStoryboardName</key>

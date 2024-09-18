@@ -57,7 +57,7 @@ class Songs extends StatelessWidget {
                           stream: controller.player.value.playingStream,
                           builder: (context, snapshot) {
                             return Hero(
-                              tag: controller.id,
+                              tag: 'controller.id',
                               child: QueryArtworkWidget(
                                 artworkHeight: 45,
                                 artworkWidth: 45,
@@ -222,8 +222,8 @@ class Songs extends StatelessWidget {
                           return controller.currentSongId.value == item.data![index].id && controller.playing.value
                               ? SizedBox(
                             width: 20,
-                            child: LoadingAnimationWidget.staggeredDotsWave(
-                              color: Colors.green,
+                            child: LoadingAnimationWidget.prograssiveDots(
+                              color: Colors.deepOrangeAccent,
                               size: 20,
                             ),
                           )
