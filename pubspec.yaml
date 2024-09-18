@@ -51,6 +51,7 @@ dependencies:
   get_it: ^7.7.0
   device_info_plus: ^10.1.2
   loading_animation_widget: ^1.2.1
+  modal_bottom_sheet: ^3.0.0
 
 dependency_overrides:
   collection: ^1.19.0

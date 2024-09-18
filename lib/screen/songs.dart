@@ -1,7 +1,9 @@
 import 'package:display_misic_list/controller/songs_controller.dart';
+import 'package:display_misic_list/screen/player_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:marquee/marquee.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 
@@ -16,6 +18,7 @@ class Songs extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
+
     return Scaffold(
       appBar: AppBar(
         title: const Text(playerName),
@@ -25,7 +28,11 @@ class Songs extends StatelessWidget {
         () => (controller.isPlaying.value || controller.playing.value)
             ? InkWell(
                 onTap: () {
-                  controller.openPlayer(controller.id);
+                  showMaterialModalBottomSheet(
+                    context: context,
+                    builder: (context) => PlayerScreen(),
+                  );
+                  // controller.openPlayer(controller.id);
                 },
                 child: Container(
                   margin:
@@ -49,16 +56,19 @@ class Songs extends StatelessWidget {
                         child: StreamBuilder<bool>(
                           stream: controller.player.value.playingStream,
                           builder: (context, snapshot) {
-                            return QueryArtworkWidget(
-                              artworkHeight: 45,
-                              artworkWidth: 45,
-                              id: controller.id.toInt(),
-                              type: ArtworkType.AUDIO,
-                              nullArtworkWidget: const CircleAvatar(
-                                radius: 22,
-                                backgroundImage:
-                                AssetImage('assets/icon.png'),
-                              )
+                            return Hero(
+                              tag: controller.id,
+                              child: QueryArtworkWidget(
+                                artworkHeight: 45,
+                                artworkWidth: 45,
+                                id: controller.id.toInt(),
+                                type: ArtworkType.AUDIO,
+                                nullArtworkWidget: const CircleAvatar(
+                                  radius: 22,
+                                  backgroundImage:
+                                  AssetImage('assets/icon.png'),
+                                )
+                              ),
                             );
                           },
                         ),

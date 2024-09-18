@@ -68,17 +68,20 @@ class PlayerScreen extends StatelessWidget {
                     width: 300,
                     height: 300,
                     margin: const EdgeInsets.only(top: 30, bottom: 30),
-                    child: QueryArtworkWidget(
-                      artworkBorder: BorderRadius.circular(200),
-                      id: controller.id.toInt(),
-                      artworkRepeat: ImageRepeat.repeat,
-                        keepOldArtwork:true,
-                      type: ArtworkType.AUDIO,
-                      nullArtworkWidget:  const CircleAvatar(
-                      radius: 20,
-                      backgroundImage:
-                      AssetImage('assets/icon.png'),
-                    )
+                    child: Hero(
+                      tag: controller.id,
+                      child: QueryArtworkWidget(
+                        artworkBorder: BorderRadius.circular(200),
+                        id: controller.id.toInt(),
+                        artworkRepeat: ImageRepeat.repeat,
+                          keepOldArtwork:true,
+                        type: ArtworkType.AUDIO,
+                        nullArtworkWidget:  const CircleAvatar(
+                        radius: 20,
+                        backgroundImage:
+                        AssetImage('assets/icon.png'),
+                      )
+                      ),
                     ),
                   ),
 
