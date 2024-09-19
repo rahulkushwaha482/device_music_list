@@ -28,9 +28,10 @@ class Songs extends StatelessWidget {
         backgroundColor: Colors.transparent,
       ),
       bottomNavigationBar: Obx(
-        () => (controller.isPlaying.value || controller.playing.value)
-            ? InkWell(
+        () => (controller.isPlaying.value || controller.playing.value && controller.player.value.playing)
+            ? GestureDetector(
                 onTap: () {
+                  controller.fetchArtwork(controller.id.value);
                   showMaterialModalBottomSheet(
                     context: context,
                     builder: (context) => PlayerScreen(),
@@ -44,11 +45,12 @@ class Songs extends StatelessWidget {
                   width: MediaQuery.of(context).size.width,
                   decoration: BoxDecoration(
                       gradient: const LinearGradient(
-                          begin: Alignment.topLeft,
+                          begin: Alignment.centerLeft,
                           end: Alignment(0, 5),
                           colors: [
-                            Colors.grey,
                             Colors.greenAccent,
+                            Colors.lightGreen,
+                            Colors.amberAccent,
                           ]),
                       borderRadius: BorderRadius.circular(30)),
                   child: Row(
@@ -56,25 +58,20 @@ class Songs extends StatelessWidget {
                     children: [
                       Padding(
                         padding: const EdgeInsets.only(left: 5.0, right: 3.0),
-                        child: StreamBuilder<bool>(
-                          stream: controller.player.value.playingStream,
-                          builder: (context, snapshot) {
-                            return Hero(
-                              tag: controller.id,
-                              child: QueryArtworkWidget(
-                                artworkHeight: 45,
-                                artworkWidth: 45,
-                                id: controller.id.toInt(),
-                                type: ArtworkType.AUDIO,
-                                nullArtworkWidget: const CircleAvatar(
-                                  radius: 22,
-                                  backgroundImage:
-                                  AssetImage('assets/icon.png'),
-                                )
-                              ),
-                            );
-                          },
+                        child: Hero(
+                          tag: controller.id,
+                          child: controller.cachedArtworkWidget.value ??
+                        QueryArtworkWidget(
+                        artworkHeight: 45,
+                          artworkWidth: 45,
+                          id: controller.id.toInt(),
+                          type: ArtworkType.AUDIO,
+                          nullArtworkWidget: const CircleAvatar(
+                            radius: 22,
+                            backgroundImage: AssetImage('assets/icon.png'),
+                          ),
                         ),
+                        )
                       ),
                       SizedBox(
                         width: 160,
@@ -112,47 +109,52 @@ class Songs extends StatelessWidget {
                           ],
                         ),
                       ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          IconButton(
-                              icon: const Icon(
-                                Icons.skip_previous,
-                              ),
-                              iconSize: 25.0,
-                              onPressed: () {
-                                controller.previousSong();
-                              }),
-                          StreamBuilder<bool>(
-                            stream: controller.player.value.playingStream,
-                            builder: (context, snapshot) {
-                              bool? playingState = snapshot.data;
-                              if (playingState != null && playingState) {
+                      Obx(() {
+                        return Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            IconButton(
+                                icon: const Icon(
+                                  Icons.skip_previous,
+                                ),
+                                iconSize: 25.0,
+                                onPressed: () {
+                                  controller.previousSong();
+
+                                }),
+                            StreamBuilder<bool>(
+                              stream: controller.player.value.playingStream,
+                              builder: (context, snapshot) {
+                                bool? playingState = snapshot.data;
+                                if (playingState != null && playingState) {
+                                  return IconButton(
+                                      icon: const Icon(Icons.pause),
+                                      iconSize: 25.0,
+                                      onPressed: () {
+                                        controller.pauseAudio();
+                                      });
+                                }
                                 return IconButton(
-                                    icon: const Icon(Icons.pause),
+                                    icon: const Icon(Icons.play_arrow),
                                     iconSize: 25.0,
                                     onPressed: () {
-                                      controller.pauseAudio();
+                                      controller.playAudio();
                                     });
-                              }
-                              return IconButton(
-                                  icon: const Icon(Icons.play_arrow),
-                                  iconSize: 25.0,
-                                  onPressed: () {
-                                    controller.playAudio();
-                                  });
-                            },
-                          ),
-                          IconButton(
-                              icon: const Icon(
-                                Icons.skip_next,
-                              ),
-                              iconSize: 25.0,
-                              onPressed: () {
-                                controller.nextSong();
-                              }),
-                        ],
-                      ),
+                              },
+                            ),
+                            IconButton(
+                                icon: const Icon(
+                                  Icons.skip_next,
+                                ),
+                                iconSize: 25.0,
+                                onPressed: () {
+                                  controller.nextSong();
+                                }),
+                          ],
+                        );
+                      }
+                    ),
+
                     ],
                   ),
                 ),
@@ -197,7 +199,7 @@ class Songs extends StatelessWidget {
                         color: Colors.white30,
                         height: 0,
                         thickness: 1,
-                        indent: 85,
+                        indent: 72,
                       );
                     },
                     physics: const BouncingScrollPhysics(),
@@ -246,9 +248,13 @@ class Songs extends StatelessWidget {
                                 : const SizedBox();
                           }),
                           onTap: () {
-                            controller.audioPlayPause(
-                                item.data![index].data, item.data, index);
-                            controller.playing.value = true;
+
+                            if(item.data![index].data.isNotEmpty){
+                              controller.audioPlayPause(
+                                  item.data![index].data, item.data, index);
+                              controller.playing.value = true;
+                            }
+
                           },
                         ),
                       );

@@ -1,10 +1,9 @@
 import 'dart:io';
-
 import 'package:device_info_plus/device_info_plus.dart';
-
 import 'package:display_misic_list/utils/common.dart';
 import 'package:display_misic_list/utils/utils.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:just_audio/just_audio.dart';
@@ -29,6 +28,23 @@ class SongController extends GetxController {
 
   List<SongModel> songs = [];
   var currentIndex = 0.obs;
+
+  var cachedArtworkWidget = Rxn<Widget>(); // To store the cached artwork
+
+  // Call this method when you want to fetch the artwork
+  Future<void> fetchArtwork(int songId) async {
+    cachedArtworkWidget.value = QueryArtworkWidget(
+      artworkHeight: 45,
+      artworkWidth: 45,
+      id: songId,
+      type: ArtworkType.AUDIO,
+      nullArtworkWidget: const CircleAvatar(
+        radius: 22,
+        backgroundImage: AssetImage('assets/icon.png'),
+      ),
+    );
+  }
+
 
   void requestPermission() async {
 
@@ -118,6 +134,8 @@ class SongController extends GetxController {
   void _updateCurrentPlayingSongDetails(int index) {
     if (songs.isNotEmpty) {
       currentIndex = index.obs;
+      currentSongId.value = songs[index].id;
+
       setAudioSource(index);
     }
   }
@@ -125,13 +143,15 @@ class SongController extends GetxController {
   void setAudioSource(int index) async {
     try {
       var value = await getFilePath(songs[index].id).then((value) => value);
-      await player.value.setAudioSource(await createPlaylist(songs, value),
+       player.value.setAudioSource(await createPlaylist(songs, value),
           initialIndex: index);
       title.value = songs[index].title;
       artist.value = songs[index].artist!;
       id.value = songs[index].id;
       currentSongId.value = songs[index].id;
       isPlaying.value = true;
+      fetchArtwork(songs[index].id,);
+
     } catch (e) {
       if (kDebugMode) {
         print("Error loading audio source: $e");
@@ -195,7 +215,9 @@ class SongController extends GetxController {
   }
 
   void audioPlayPause(String data, List<SongModel>? itemData, int index) async {
-    await audioQuery.value.queryArtwork(itemData![index].id, ArtworkType.AUDIO);
+     audioQuery.value.queryArtwork(itemData![index].id, ArtworkType.AUDIO);
+    fetchArtwork(itemData[index].id,);
+
     setAudioSource(index);
 
     playing.value = true;
