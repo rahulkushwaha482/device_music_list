@@ -2,10 +2,10 @@ import 'package:display_misic_list/controller/songs_controller.dart';
 import 'package:display_misic_list/screen/player_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:marquee/marquee.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:on_audio_query/on_audio_query.dart';
-import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 import '../constant/app_string.dart';
 

@@ -7,17 +7,22 @@ import 'package:just_audio_background/just_audio_background.dart';
 import 'routes/app_pages.dart';
 
 Future<void> main() async {
-
   // Ensure that both the initialization and app run happen within the same zone
   runZonedGuarded<Future<void>>(
-        () async {
+    () async {
       WidgetsFlutterBinding.ensureInitialized();
 
+
       await JustAudioBackground.init(
-        androidNotificationChannelId: 'com.ryanheise.bg_demo.channel.audio',
-        androidNotificationChannelName: 'Audio playback',
-        androidNotificationOngoing: true,
-      );
+          androidNotificationChannelId: 'com.ryanheise.bg_demo.channel.audio',
+          androidNotificationChannelName: 'Audio playback',
+          androidNotificationOngoing: true,
+          androidStopForegroundOnPause: true,
+          androidShowNotificationBadge: true,
+          androidNotificationIcon: "mipmap/ic_launcher",
+          preloadArtwork: true,
+          notificationColor: Colors.red);
+
 
       SystemChrome.setSystemUIOverlayStyle(
         const SystemUiOverlayStyle(statusBarColor: Colors.white),
@@ -38,8 +43,7 @@ Future<void> main() async {
         ),
       );
     },
-
-        (dynamic error, StackTrace stackTrace) {
+    (dynamic error, StackTrace stackTrace) {
       log('error $error');
       log('stackTrace $stackTrace');
     },

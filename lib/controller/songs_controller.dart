@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:audio_service/audio_service.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:display_misic_list/utils/common.dart';
 import 'package:display_misic_list/utils/utils.dart';
@@ -7,7 +8,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:just_audio/just_audio.dart';
-import 'package:just_audio_background/just_audio_background.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -31,6 +31,8 @@ class SongController extends GetxController {
 
   var cachedArtworkWidget = Rxn<Widget>(); // To store the cached artwork
 
+
+
   // Call this method when you want to fetch the artwork
   Future<void> fetchArtwork(int songId) async {
     cachedArtworkWidget.value = QueryArtworkWidget(
@@ -47,7 +49,7 @@ class SongController extends GetxController {
 
 
   void requestPermission() async {
-
+   await  requestNotificationPermission();
     if(Platform.isAndroid){
       var deviceData =  await DeviceInfoPlugin().androidInfo;
       if(deviceData.version.sdkInt>=33){
@@ -79,6 +81,7 @@ class SongController extends GetxController {
           isPermissionGranted.value = true;
           audioQuery.value = OnAudioQuery();
           player.value = AudioPlayer();
+
           //update the current playing song index listener
           player.value.currentIndexStream.listen((index) {
             if (index != null) {
@@ -123,6 +126,12 @@ class SongController extends GetxController {
   void onInit() {
     super.onInit();
     requestPermission();
+  }
+
+  Future<void> requestNotificationPermission() async {
+    if (await Permission.notification.isDenied) {
+      await Permission.notification.request();
+    }
   }
 
   @override

@@ -46,7 +46,6 @@ dependencies:
   get: ^4.6.6
   marquee: ^2.2.3
   audio_video_progress_bar: ^2.0.3
-  audio_service: ^0.18.15
   get_it: ^7.7.0
   device_info_plus: ^10.1.2
   loading_animation_widget: ^1.2.1
